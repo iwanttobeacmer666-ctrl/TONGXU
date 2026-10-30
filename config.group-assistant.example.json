@@ -1,0 +1,22 @@
+{
+  "Owner": "YOUR_USER_ID",
+  "Groups": [
+    "YOUR_GROUP_ID"
+  ],
+  "DataDir": "D:/TONGXU-WORK/files",
+  "WorkDir": "D:/TONGXU-WORK/tmp",
+  "StateDir": "D:/TONGXU-WORK/state",
+  "SoftwareDir": "D:/TONGXU-WORK/software",
+  "Timezone": "UTC",
+  "AutomaticRoutine": true,
+  "PythonCommand": "",
+  "NodeCommand": "",
+  "NpmCLI": "",
+  "CodexHome": "D:/TONGXU/runtime/codex-home",
+  "CodexCommand": "D:/Tools/Codex/codex.exe",
+  "WindowsSandbox": "mxc",
+  "BoundaryVerified": false,
+  "Language": "zh",
+  "ToolRoots": [],
+  "AllowedHosts": []
+}

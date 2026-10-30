@@ -1,0 +1,30 @@
+# Local data and credentials (never publish)
+/runtime/
+/WORK/
+/config.group-assistant.json
+**/auth.json
+**/auth-*.json
+**/operator-setup.json
+**/.env
+**/.env.*
+**/*.pem
+**/*.key
+**/*.pfx
+**/*.sqlite*
+**/*.db
+**/node_modules/
+**/.codex/
+# Build and local evidence
+/bin/
+/build-cache/
+**/obj/
+**/bin/
+/.planning/
+/inspection/
+**/.verification/
+*.log
+*.pdb
+*.exe
+*.dll
+*.zip
+*.tmp

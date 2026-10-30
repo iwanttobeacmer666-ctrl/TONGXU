@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>tongxu</AssemblyName>
+    <RootNamespace>Tongxu.Desktop</RootNamespace>
+    <Product>tongxu · 同序</Product>
+    <Title>tongxu</Title>
+    <Description>同序 · 团队工作台</Description>
+    <NuGetAudit>false</NuGetAudit>
+    <RestoreSources></RestoreSources>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\tongxu.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Localization.Strings.json" />
+    <Resource Include="Assets\tongxu.png" />
+    <Resource Include="Assets\tongxu.ico" />
+  </ItemGroup>
+</Project>
