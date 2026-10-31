@@ -1,6 +1,6 @@
 # 同序 tongxu · Windows 工作台
 
-双击 `D:\MY_SHARE\group-assistant\bin\desktop\tongxu.exe` 启动。请保留同目录的 DLL、JSON 等运行文件，也不要把 EXE 单独移走。程序使用本机已有的 .NET 10 Windows Desktop 运行时，不需要安装前端依赖。
+在解压后的程序目录中，双击 `bin\desktop\tongxu.exe` 启动。请保留同目录的 DLL、JSON 等运行文件，也不要把 EXE 单独移走。程序使用本机已有的 .NET 10 Windows Desktop 运行时，不需要安装前端依赖。
 
 中文产品名为「同序」，其他界面语言使用 `tongxu`。桌面入口统一为 `tongxu.exe`。项目根目录、后端及现有配置／资料路径不改名。
 
@@ -66,11 +66,3 @@
 隔离联调使用真实管理进程、受保护本地通道和实际 PowerShell 保存逻辑，配合合成 Agent／平台和临时数据，验证了成员恢复与删除、任务详情与停止、临时区忙碌拒绝及清空、文件清单分页、选择删除、整区清空、版本冲突、清理恢复、离线状态和目录保存。另有千人列表、长 ID、长输出、背景保存与恢复，以及 1360×860、1040×740、960×640 布局渲染检查。多语言修改额外检查十种语言的文案与格式参数、全部六页渲染、即时切换及保存、选择和原文保留，以及隔离原生窗口的最小化、最大化、还原和关闭操作。
 
 真实企业微信多人并发、真实 Codex 登录和模型调用尚未联调；不同显示器上的实际 Windows 缩放、完整键盘操作及原生文件选择器也尚需人工验收。任务历史仅在内存保留最近 50 个已结束任务，每个任务最多 40 条事件，重启后不保留。
-
-设计稿：[Figma 可编辑页面](https://www.figma.com/design/sZnUB8vcApuNLRtVXnGdcu?node-id=5-362)。其中的数据是标注过的设计示例；程序日常界面读取真实后端。
-
-## 开发入口
-
-桌面源码在 `D:\MY_SHARE\group-assistant\desktop`，项目文件为 `tongxu.csproj`，命名空间为 `Tongxu.Desktop`。运行项目根目录的 `Build-Desktop.ps1` 可离线构建 `tongxu.exe`；运行 `build.ps1` 可执行原有后端验证并构建后端。两者都不会启动群服务。
-
-接口说明见同目录的 `local-management-api.md`。本轮实施和隔离验证记录位于 `.planning\desktop-20261029`，实际界面截图和联调结果保存在其中的 `evidence` 目录。
