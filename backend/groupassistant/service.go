@@ -68,6 +68,7 @@ type Service struct {
 	tasks            map[string]*groupTask
 	recentTasks      []*groupTask
 	accessMu         sync.RWMutex // admission/short operations/publication vs revocation
+	updatePaused     bool         // protected by accessMu; existing tasks may finish
 	membersMu        sync.RWMutex
 	revocations      map[Identity][]*groupTask
 	deletePlans      map[string]memberDeletePlan
@@ -304,6 +305,16 @@ func (s *Service) handle(ctx context.Context, msg *core.Message) Response {
 	text := strings.TrimSpace(msg.Content)
 	command, arg, _ := strings.Cut(text, " ")
 	arg = strings.TrimSpace(arg)
+	if s.updatePaused {
+		_, reserved := ctx.Value(mediaReservationKey{}).(*mediaReservation)
+		switch command {
+		case "/approve", "/reject", "/tasks", "/stop", "/help", "/context", "/whoami", "/cancel":
+		default:
+			if !reserved {
+				return s.failure(ErrBusy)
+			}
+		}
+	}
 	switch command {
 	case "/tasks", "/stop":
 		s.accessMu.RUnlock()

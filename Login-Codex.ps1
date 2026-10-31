@@ -1,11 +1,12 @@
-param([switch]$StatusOnly, [switch]$ChooseCodex)
+﻿param([switch]$StatusOnly, [switch]$ChooseCodex)
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'Operator-Setup.ps1')
 $taskConfigPath = Join-Path $PSScriptRoot 'config.group-assistant.json'
 $taskBinary = Join-Path $PSScriptRoot 'bin\group-assistant.exe'
 if (-not (Test-Path -LiteralPath $taskBinary -PathType Leaf)) { throw 'Build group-assistant.exe first.' }
 $taskBase = Get-OperatorBase $PSScriptRoot
-$taskSetup = Read-OperatorSetup (Join-Path $PSScriptRoot 'runtime\operator-setup.json') $taskBase
+$taskRuntime = Get-OperatorRuntime $PSScriptRoot
+$taskSetup = Read-OperatorSetup (Join-Path $taskRuntime 'operator-setup.json') $taskBase
 $taskConfig = Merge-OperatorPaths $taskBase $taskSetup
 $taskConfig.CodexCommand = Select-NativeCodex $taskConfig.CodexCommand -Choose:$ChooseCodex
 if ($null -ne $taskSetup) {
@@ -15,14 +16,14 @@ if ($null -ne $taskSetup) {
 }
 if ($null -ne $taskSetup) { Assert-OperatorPaths $taskBase $taskSetup }
 if (-not (Test-NativeCodexPath $taskConfig.CodexCommand)) { throw 'Codex path unavailable. Select an existing native executable in the configuration menu first; no login started.' }
-$taskCheckPath = Join-Path $PSScriptRoot ('runtime\.login-check-' + [guid]::NewGuid().ToString('N') + '.json')
+$taskCheckPath = Join-Path $taskRuntime ('.login-check-' + [guid]::NewGuid().ToString('N') + '.json')
 try {
-    New-Item -ItemType Directory -Path (Join-Path $PSScriptRoot 'runtime') -Force | Out-Null
+    New-Item -ItemType Directory -Path $taskRuntime -Force | Out-Null
     Write-PrivateJson $taskCheckPath $taskConfig
     & $taskBinary -config $taskCheckPath -check
     if ($LASTEXITCODE -ne 0) { throw 'Configuration check failed; no login started.' }
 } finally { if (Test-Path -LiteralPath $taskCheckPath) { Remove-Item -LiteralPath $taskCheckPath } }
-$taskLoginTemp = Join-Path $PSScriptRoot 'runtime\login-temp'
+$taskLoginTemp = Join-Path $taskRuntime 'login-temp'
 New-Item -ItemType Directory -Path $taskConfig.CodexHome,$taskLoginTemp -Force | Out-Null
 $taskStart = [Diagnostics.ProcessStartInfo]::new()
 $taskStart.FileName = $taskConfig.CodexCommand

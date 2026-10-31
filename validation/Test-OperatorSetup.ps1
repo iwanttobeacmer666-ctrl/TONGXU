@@ -1,4 +1,4 @@
-param([string]$ProjectRoot = (Split-Path $PSScriptRoot -Parent), [string]$Go = 'D:\Go\bin\go.exe')
+﻿param([string]$ProjectRoot = (Split-Path $PSScriptRoot -Parent), [string]$Go = 'D:\Go\bin\go.exe')
 $ErrorActionPreference = 'Stop'
 . (Join-Path $ProjectRoot 'Operator-Setup.ps1')
 $script:answers = [Collections.Generic.Queue[string]]::new()
@@ -157,7 +157,7 @@ try {
         # project with a fake binary and queued console input; never a real bot.
         $app = Join-Path $taskDirectory 'app'
         New-Item -ItemType Directory -Path (Join-Path $app 'bin'),(Join-Path $app 'runtime') | Out-Null
-        foreach ($scriptName in @('Start-GroupAssistant.ps1','Configure-GroupAssistant.ps1','Operator-Setup.ps1','Operator-Paths.ps1','Test-Office.ps1','Login-Codex.ps1')) {
+        foreach ($scriptName in @('Start-GroupAssistant.ps1','Configure-GroupAssistant.ps1','Operator-Setup.ps1','Operator-Paths.ps1','Runtime-Paths.ps1','Test-Office.ps1','Login-Codex.ps1')) {
             Copy-Item -LiteralPath (Join-Path $ProjectRoot $scriptName) -Destination (Join-Path $app $scriptName)
         }
         Copy-Item -LiteralPath $fixtureBinary -Destination (Join-Path $app 'bin\group-assistant.exe')
@@ -188,7 +188,7 @@ try {
         # Canceling first configuration must not persist or start anything.
         $canceledApp=Join-Path $taskDirectory 'cancel-app'
         New-Item -ItemType Directory -Path (Join-Path $canceledApp 'bin'),(Join-Path $canceledApp 'runtime') | Out-Null
-        foreach($scriptName in @('Start-GroupAssistant.ps1','Operator-Setup.ps1','Operator-Paths.ps1')) {
+        foreach($scriptName in @('Start-GroupAssistant.ps1','Operator-Setup.ps1','Operator-Paths.ps1','Runtime-Paths.ps1')) {
             Copy-Item -LiteralPath (Join-Path $ProjectRoot $scriptName) -Destination (Join-Path $canceledApp $scriptName)
         }
         Copy-Item -LiteralPath $fixtureBinary -Destination (Join-Path $canceledApp 'bin\group-assistant.exe')

@@ -5,6 +5,8 @@ namespace Tongxu.Desktop;
 
 public partial class App : Application
 {
+    FileStream? _desktopLease;
+    protected override void OnExit(ExitEventArgs e) { _desktopLease?.Dispose(); base.OnExit(e); }
     protected override async void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -29,6 +31,11 @@ public partial class App : Application
                         throw new InvalidOperationException(Localization.T("不支持的启动参数。"));
                 }
             root = root is null ? FindRoot() : Path.GetFullPath(root);
+            if (!selfTest && AppPaths.Installed(root))
+            {
+                Directory.CreateDirectory(AppPaths.Runtime(root));
+                _desktopLease = new FileStream(Path.Combine(AppPaths.Runtime(root), "desktop.lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+            }
             Localization.LoadPreference(root);
             Theme.Apply("system");
             var client = new LocalClient(root);

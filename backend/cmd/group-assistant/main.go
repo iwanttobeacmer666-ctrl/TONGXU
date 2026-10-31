@@ -47,7 +47,7 @@ func readConfig(name string) (settings, error) {
 		cfg.StateDir = filepath.Join(filepath.Dir(cfg.DataDir), "state")
 	}
 	if cfg.Timezone == "" {
-		cfg.Timezone = "UTC"
+		cfg.Timezone = "America/Tijuana"
 	}
 	if _, err := time.LoadLocation(cfg.Timezone); err != nil {
 		return cfg, fmt.Errorf("invalid display timezone")
@@ -306,12 +306,25 @@ func run() error {
 	})
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
+	var calls sync.WaitGroup
+	var callbackMu sync.Mutex
+	accepting := true
+	callbackActive := 0
 	if *operatorPath != "" {
 		_, _, owner, _, err := readOperator(*operatorPath)
 		if err != nil || owner != cfg.Owner {
 			return fmt.Errorf("operator settings unavailable or owner mismatch")
 		}
 		manager := &operatorManager{path: *operatorPath, service: service, owner: cfg.Owner, shutdown: stop, started: time.Now().UTC()}
+		manager.sealUpdate = func() bool {
+			callbackMu.Lock()
+			defer callbackMu.Unlock()
+			if callbackActive != 0 {
+				return false
+			}
+			accepting = false
+			return true
+		}
 		if reporter, ok := p.(interface{ ConnectionStatus() (string, time.Time) }); ok {
 			manager.platform = reporter
 		}
@@ -321,9 +334,6 @@ func run() error {
 		}
 		defer closePipe()
 	}
-	var calls sync.WaitGroup
-	var callbackMu sync.Mutex
-	accepting := true
 	handleMessage := func(ctx context.Context, platform core.Platform, msg *core.Message) {
 		callbackMu.Lock()
 		if !accepting || msg == nil {
@@ -331,8 +341,14 @@ func run() error {
 			return
 		}
 		calls.Add(1)
+		callbackActive++
 		callbackMu.Unlock()
-		defer calls.Done()
+		defer func() {
+			callbackMu.Lock()
+			callbackActive--
+			callbackMu.Unlock()
+			calls.Done()
+		}()
 		response := service.Handle(ctx, msg)
 		_, needsFollowup := approvalFollowups.LoadAndDelete(msg)
 		if response.Text != "" {

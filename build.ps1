@@ -1,7 +1,7 @@
-param([string]$Go = 'D:\Go\bin\go.exe')
+param([string]$Go = 'D:\Go\bin\go.exe', [string]$CacheDirectory = (Join-Path $PSScriptRoot 'build-cache'))
 $ErrorActionPreference = 'Stop'
 $sourceDir = Join-Path $PSScriptRoot 'backend'
-$cacheDir = Join-Path $PSScriptRoot 'build-cache'
+$cacheDir = [IO.Path]::GetFullPath($CacheDirectory)
 if (-not (Test-Path -LiteralPath $Go -PathType Leaf)) { throw 'Set -Go to an existing Go executable; this script does not install tools.' }
 $taskEnvironment = @{
  GOTOOLCHAIN = 'local'

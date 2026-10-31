@@ -1,7 +1,7 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'Operator-Setup.ps1')
 $taskManageBinary = Join-Path $PSScriptRoot 'bin\group-assistant.exe'
-$taskManageSettings = Join-Path $PSScriptRoot 'runtime\operator-setup.json'
+$taskManageSettings = Join-Path (Get-OperatorRuntime $PSScriptRoot) 'operator-setup.json'
 if (-not (Test-Path -LiteralPath $taskManageBinary -PathType Leaf)) { throw '请先构建同序。' }
 if (-not (Test-Path -LiteralPath $taskManageSettings -PathType Leaf)) { throw '请先用 Start-GroupAssistant.ps1 完成首次配置。' }
 

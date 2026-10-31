@@ -1,9 +1,9 @@
-param([string]$ProjectRoot = (Split-Path $PSScriptRoot -Parent))
+﻿param([string]$ProjectRoot = (Split-Path $PSScriptRoot -Parent))
 $ErrorActionPreference='Stop'
 $taskFixture=Join-Path $PSScriptRoot ('management-fixture-'+[guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path (Join-Path $taskFixture 'bin'),(Join-Path $taskFixture 'runtime') | Out-Null
 try {
-    foreach($name in @('Manage-GroupAssistant.ps1','Operator-Setup.ps1','Operator-Paths.ps1')) {
+    foreach($name in @('Manage-GroupAssistant.ps1','Operator-Setup.ps1','Operator-Paths.ps1','Runtime-Paths.ps1')) {
         Copy-Item -LiteralPath (Join-Path $ProjectRoot $name) -Destination (Join-Path $taskFixture $name)
     }
     $taskExe=Join-Path $taskFixture 'bin\group-assistant.exe'

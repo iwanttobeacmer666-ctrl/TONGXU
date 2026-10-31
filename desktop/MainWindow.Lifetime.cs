@@ -16,7 +16,8 @@ public partial class MainWindow
     }
     async Task HandleWindowCloseAsync()
     {
-        if (_closePending || _exitPending) return;
+        if (_closePending || _exitPending || _updateInstalling) return;
+        if (_updateBusy) { OpenFromTray(); Notice(Localization.T("请先取消更新操作，或等待更新完成。")); return; }
         _closePending = true;
         try
         {
@@ -42,7 +43,7 @@ public partial class MainWindow
     }
     internal async Task<bool> ExitFromTrayAsync()
     {
-        if (_exitPending) return false;
+        if (_exitPending || _updateBusy) return false;
         _exitPending = true;
         _poll.Stop();
         OpenFromTray();

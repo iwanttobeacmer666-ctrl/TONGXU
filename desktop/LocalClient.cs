@@ -10,7 +10,8 @@ public sealed class LocalClient(string root)
 {
     public string Root { get; } = Path.GetFullPath(root);
     public string Binary => Path.Combine(Root, "bin", "group-assistant.exe");
-    public string OperatorSettings => Path.Combine(Root, "runtime", "operator-setup.json");
+    public string Runtime => AppPaths.Runtime(Root);
+    public string OperatorSettings => Path.Combine(Runtime, "operator-setup.json");
     public Task<JsonNode> SendAsync(JsonObject request, CancellationToken token = default) => ExecuteAsync(Binary, ["-manage-local", "-operator-settings", OperatorSettings], request, token);
     public Task<JsonNode> SettingsAsync(string action, JsonObject? request = null, CancellationToken token = default) => ExecuteAsync(Shell, ["-NoProfile", "-NonInteractive", "-File", Path.Combine(Root, "Desktop-Operator.ps1"), "-Action", action, "-ProjectRoot", Root], request, token);
     public static string Shell => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), "WindowsPowerShell", "v1.0", "powershell.exe");

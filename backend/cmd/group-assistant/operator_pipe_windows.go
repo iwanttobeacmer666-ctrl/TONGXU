@@ -188,7 +188,7 @@ func startOperatorPipe(ctx context.Context, path string, manager *operatorManage
 				reply := manager.handle(ctx, req)
 				// Stop through the existing main lifecycle only after the reply/ACK
 				// attempt. Request acceptance is not a cleanup completion claim.
-				if req.Action == "service-stop" && reply.Success && manager.shutdown != nil {
+				if (req.Action == "service-stop" || req.Action == "update-stop") && reply.Success && manager.shutdown != nil {
 					defer manager.shutdown()
 				}
 				encoded, err := json.Marshal(reply)

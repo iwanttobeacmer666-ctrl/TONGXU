@@ -1,5 +1,6 @@
-# Path discovery reads file metadata only. It never starts Codex or reads auth.
+﻿# Path discovery reads file metadata only. It never starts Codex or reads auth.
 Set-StrictMode -Version Latest
+. (Join-Path $PSScriptRoot 'Runtime-Paths.ps1')
 $script:OperatorPathKeys = @('CodexCommand','DataDir','WorkDir','SoftwareDir','StateDir','CodexHome')
 
 function Test-NativeCodexPath([string]$Path) {
@@ -80,6 +81,17 @@ function Select-NativeCodex([string]$Saved, [switch]$Choose) {
 
 function Get-OperatorBase([string]$ProjectRoot) {
     $base = Get-Content -LiteralPath (Join-Path $ProjectRoot 'config.group-assistant.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+    if (Test-InstalledLayout $ProjectRoot) {
+        $userRoot = Split-Path (Get-OperatorRuntime $ProjectRoot) -Parent
+        foreach ($entry in @(@('DataDir','files'),@('WorkDir','tmp'),@('SoftwareDir','software'),@('StateDir','state'))) { $base.($entry[0]) = Join-Path $userRoot $entry[1] }
+        $base.CodexHome = Join-Path (Get-OperatorRuntime $ProjectRoot) 'codex-home'
+        $base.ToolRoots = @($base.ToolRoots | Where-Object { Test-Path -LiteralPath $_ -PathType Container })
+        foreach ($key in @('PythonCommand','NodeCommand','NpmCLI')) {
+            if ($null -ne $base.PSObject.Properties[$key] -and $base.$key -and -not (Test-Path -LiteralPath $base.$key -PathType Leaf)) { $base.$key = '' }
+        }
+        # Saved Paths are merged afterwards; existing custom data roots win.
+        return $base
+    }
     # Keep the existing installation exactly. Only a relocated project receives
     # its own project-local default home; never reuse the original user's auth.
     $expected = Join-Path $ProjectRoot 'runtime\codex-home'

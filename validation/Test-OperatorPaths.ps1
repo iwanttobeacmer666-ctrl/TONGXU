@@ -1,4 +1,4 @@
-param([string]$ProjectRoot = (Split-Path $PSScriptRoot -Parent))
+﻿param([string]$ProjectRoot = (Split-Path $PSScriptRoot -Parent))
 $ErrorActionPreference = 'Stop'
 . (Join-Path $ProjectRoot 'Operator-Setup.ps1')
 $script:pathAnswers = [Collections.Generic.Queue[string]]::new()
@@ -21,6 +21,10 @@ try {
     $base=Get-OperatorBase $ProjectRoot
     $diskBase=Get-Content (Join-Path $ProjectRoot 'config.group-assistant.json') -Raw -Encoding UTF8 | ConvertFrom-Json
     Assert-PathCheck (($base | ConvertTo-Json -Depth 20) -ceq ($diskBase | ConvertTo-Json -Depth 20)) '本机默认配置被改变。'
+    # Public templates intentionally grant no host tool directories. Exercise
+    # tool-overlap checks using a test-owned directory, not machine settings.
+    $base.ToolRoots = @((Join-Path $fixture 'fixture-tools'))
+    New-Item -ItemType Directory -Path $base.ToolRoots[0] -Force | Out-Null
     # Use an existing PE fixture for path-only checks; this is never run as Codex.
     # Production configuration and its potentially stale selected path stay intact.
     $base.CodexCommand=Join-Path $ProjectRoot 'bin\group-assistant.exe'
@@ -53,7 +57,7 @@ try {
     $legacy.Paths=$invalid
     Assert-PathRejected { Assert-OperatorPaths $base $legacy }
     $invalid=$advanced | ConvertTo-Json | ConvertFrom-Json
-    $invalid.DataDir=Join-Path $ProjectRoot 'backend\disallowed'
+    $invalid.DataDir=Join-Path $ProjectRoot 'source\disallowed'
     $legacy.Paths=$invalid
     Assert-PathRejected { Assert-OperatorPaths $base $legacy }
     $invalid=$advanced | ConvertTo-Json | ConvertFrom-Json

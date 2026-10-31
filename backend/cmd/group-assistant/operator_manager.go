@@ -50,14 +50,15 @@ type manageReply struct {
 const maxManageRequest = 64 << 10
 
 type operatorManager struct {
-	mu       sync.Mutex
-	path     string
-	service  *groupassistant.Service
-	owner    string
-	platform interface{ ConnectionStatus() (string, time.Time) }
-	shutdown context.CancelFunc
-	stopping bool
-	started  time.Time
+	mu         sync.Mutex
+	path       string
+	service    *groupassistant.Service
+	owner      string
+	platform   interface{ ConnectionStatus() (string, time.Time) }
+	shutdown   context.CancelFunc
+	stopping   bool
+	sealUpdate func() bool // seals callbacks only when all delivery has finished
+	started    time.Time
 }
 
 var errNoOperatorServer = errors.New("no operator server")
@@ -162,6 +163,29 @@ func (m *operatorManager) handle(ctx context.Context, req manageRequest) manageR
 	out.Version = version
 	out.Owner = owner
 	out.Groups = groups
+	if req.Action == "update-pause" || req.Action == "update-resume" || req.Action == "update-stop" {
+		out.Groups = nil
+		out.CleanupReady = false
+		if m.service == nil || m.shutdown == nil || m.stopping || req.Version == "" || req.Version != version {
+			out.Message = "服务或配置状态已变化，请刷新后重试。"
+			return out
+		}
+		switch req.Action {
+		case "update-pause":
+			m.service.PauseForUpdate(true)
+		case "update-resume":
+			m.service.PauseForUpdate(false)
+		case "update-stop":
+			if !m.service.UpdateReady() || m.sealUpdate == nil || !m.sealUpdate() {
+				out.Code = "busy"
+				out.Message = "正在等待现有任务与消息发送完成。"
+				return out
+			}
+			m.stopping = true
+		}
+		out.Success = true
+		return out
+	}
 	if req.Action == "status" || req.Action == "service-stop" {
 		out.Groups = nil
 		out.CleanupReady = false
@@ -180,6 +204,7 @@ func (m *operatorManager) handle(ctx context.Context, req manageRequest) manageR
 		}
 		out.Status = &localServiceStatus{Service: "offline", Platform: "stopped", Agent: "unchecked", Started: m.started}
 		if m.service != nil {
+			out.Status.UpdatePaused = m.service.UpdatePaused()
 			out.Status.Service = "running"
 			if m.stopping {
 				out.Status.Service = "stopping"

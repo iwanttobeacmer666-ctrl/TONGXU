@@ -1,8 +1,8 @@
-param([switch]$Configure, [switch]$ChooseCodex)
+﻿param([switch]$Configure, [switch]$ChooseCodex)
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'Operator-Setup.ps1')
 $taskBinary = Join-Path $PSScriptRoot 'bin\group-assistant.exe'
-$taskDirectory = Join-Path $PSScriptRoot 'runtime'
+$taskDirectory = Get-OperatorRuntime $PSScriptRoot
 $taskSetupPath = Join-Path $taskDirectory 'operator-setup.json'
 $taskLock = $null
 try {

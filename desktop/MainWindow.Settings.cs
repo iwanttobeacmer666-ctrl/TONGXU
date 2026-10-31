@@ -80,6 +80,8 @@ public partial class MainWindow
         _credentialState.Text = Localization.F($"连接程序：企业微信  ·  Agent：Codex CLI\n机器人 ID：{_settings.S("BotIDMasked")}  ·  凭据：{(_settings.B("HasCredentials") ? Localization.T("已加密保存（不显示）") : Localization.T("尚未配置"))}\n当前管理员：{_owner}");
         _startButton.IsEnabled = _serviceKnown && !_online && _launcher is not { IsCompleted: false } && _settings.B("HasCredentials");
         _stopButton.IsEnabled = _serviceKnown && _online && state != "stopping";
+        UpdateButtons();
+        if (_status.B("UpdatePaused") && !_updateBusy) _updateStatus.Text = Localization.T("等待现有任务完成；可取消更新等待。");
     }
     async Task StartServiceAsync()
     {
@@ -156,10 +158,12 @@ public partial class MainWindow
         stack.Children.Add(_pathsText);
         stack.Children.Add(T("不自动搬迁、复制或删除原目录中的资料。编辑前需停止服务，保存时复用现有路径校验。\n更换目录后，旧资料和会话仍在原位置；新位置不会自动继承。", 12, false, true));
         stack.Children.Add(B("编辑服务目录", () => EditConfigurationAsync(true)));
+        AddUpdateSettings(stack);
         return page;
     }
     void UpdateSettingsView()
     {
+        _updateVersionText.Text = Localization.F($"当前版本：{UpdateService.CurrentVersion}");
         var paths = _settings?["Paths"];
         _pathsText.Text = string.Join("\n\n", new[] { (Localization.T("文档目录"), "DataDir"), (Localization.T("任务临时目录"), "WorkDir"), (Localization.T("用户依赖目录"), "SoftwareDir"), (Localization.T("会话状态目录"), "StateDir"), (Localization.T("专用 Codex 登录目录"), "CodexHome"), (Localization.T("Codex CLI 程序"), "CodexCommand") }.Select(p => p.Item1 + "\n" + paths.S(p.Item2)));
         if (!_ready)
@@ -264,7 +268,7 @@ public partial class MainWindow
         if (!Dispatcher.HasShutdownStarted)
             Dispatcher.BeginInvoke(() => { if (!_closing && Theme.Mode == "system") Theme.Apply("system"); });
     }
-    string Preferences => Path.Combine(Client.Root, "runtime", "desktop-settings.json");
+    string Preferences => Path.Combine(Client.Runtime, "desktop-settings.json");
     void LoadPreferences()
     {
         try

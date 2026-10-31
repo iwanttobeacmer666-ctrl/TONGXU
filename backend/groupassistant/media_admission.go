@@ -25,6 +25,9 @@ type mediaReservation struct {
 func (s *Service) AdmitMedia(ctx context.Context, msg *core.Message, count int) (*core.InboundMediaAdmission, error) {
 	s.accessMu.RLock()
 	defer s.accessMu.RUnlock()
+	if s.updatePaused {
+		return nil, ErrBusy
+	}
 	id, err := s.identity(msg)
 	if err != nil {
 		return nil, err

@@ -5,7 +5,7 @@ $ProgressPreference='SilentlyContinue'
 [Console]::OutputEncoding=[Text.UTF8Encoding]::new($false)
 $OutputEncoding=[Text.UTF8Encoding]::new($false)
 . (Join-Path $PSScriptRoot 'Operator-Setup.ps1')
-$taskRuntime=Join-Path $ProjectRoot 'runtime'
+$taskRuntime=Get-OperatorRuntime $ProjectRoot
 $taskSettings=Join-Path $taskRuntime 'operator-setup.json'
 $taskBinary=Join-Path $ProjectRoot 'bin\group-assistant.exe'
 function Get-DesktopSnapshot {

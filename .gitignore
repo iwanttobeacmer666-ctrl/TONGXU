@@ -28,3 +28,10 @@
 *.dll
 *.zip
 *.tmp
+/setup/build-*/
+/setup/dist/
+/setup/desktop-check/
+/setup/verification*/
+/setup/verify-*/
+/validation/github-updates/
+/validation/*-fixture-*/

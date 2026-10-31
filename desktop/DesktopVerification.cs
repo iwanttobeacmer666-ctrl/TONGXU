@@ -58,6 +58,8 @@ internal static class DesktopVerification
         checks.Add("Ten complete languages switch live and persist; headings, status labels and caption update without changing filters, selection, output or user content.");
         checks.Add("Failed preference save preserves language and settings; malformed appearance JSON is tolerated. Native caption minimize/maximize/restore/close and seamless caption canvas verified.");
         await window.VerifyThemeAndTrayAsync(evidence);
+        await window.VerifyUpdateSettingsAsync(evidence);
+        checks.Add("Update settings buttons, skip persistence, pending state and development-install fence verified without network or installation.");
         checks.Add("Dark/light/system themes render and persist; failed save preserves UI; synthetic system transitions update shared palette. Online close registers a real shell icon, hides and restores the window. Single-option platform/Agent dropdowns verified.");
         foreach (var pathsDialog in new[] { false, true })
         {

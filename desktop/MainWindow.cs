@@ -102,9 +102,9 @@ public partial class MainWindow : Window
         _nav.SelectionChanged += async (_, _) => { if (_nav.SelectedIndex < 0) return; _content.Content = _pages[_nav.SelectedIndex]; if (_ready) { Fade(); await RefreshAsync(true); } };
         _nav.SelectedIndex = 0;
         _poll.Tick += async (_, _) => { if (_ready && _work.CurrentCount > 0) await RefreshAsync(false); };
-        Loaded += async (_, _) => { if (!IsVerification) { await InitializeAsync(); _poll.Start(); } };
+        Loaded += async (_, _) => { if (!IsVerification) { await InitializeAsync(); _poll.Start(); _ = StartUpdateChecksAsync(); } };
         Closing += OnClosing;
-        Closed += (_, _) => { _poll.Stop(); _tray?.Dispose(); Microsoft.Win32.SystemEvents.UserPreferenceChanged -= OnSystemThemeChanged; };
+        Closed += (_, _) => { _updateLifetime.Cancel(); _updates?.Dispose(); _poll.Stop(); _tray?.Dispose(); Microsoft.Win32.SystemEvents.UserPreferenceChanged -= OnSystemThemeChanged; };
         LoadPreferences();
         Microsoft.Win32.SystemEvents.UserPreferenceChanged += OnSystemThemeChanged;
     }
@@ -193,7 +193,7 @@ public partial class MainWindow : Window
     }
     async Task RunAsync(Func<Task> action, string? busy = null)
     {
-        if (_commandPending || _exitPending || _closePending)
+        if (_commandPending || _exitPending || _closePending || _updateInstalling)
             return;
         _commandPending = true;
         _content.IsEnabled = false;

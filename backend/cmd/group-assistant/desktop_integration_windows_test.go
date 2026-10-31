@@ -144,7 +144,7 @@ func TestDesktopFrontendIsolatedIntegration(t *testing.T) {
 		}
 	}
 	project := filepath.Clean(filepath.Join("..", "..", ".."))
-	for _, name := range []string{"Desktop-Operator.ps1", "Operator-Setup.ps1", "Operator-Paths.ps1"} {
+	for _, name := range []string{"Desktop-Operator.ps1", "Operator-Setup.ps1", "Operator-Paths.ps1", "Runtime-Paths.ps1"} {
 		data, err := os.ReadFile(filepath.Join(project, name))
 		if err != nil {
 			t.Fatal(err)

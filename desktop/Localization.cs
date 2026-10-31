@@ -50,7 +50,7 @@ internal static class Localization
     }
     public static void LoadPreference(string root)
     {
-        var path = Path.Combine(root, "runtime", "desktop-settings.json");
+        var path = Path.Combine(AppPaths.Runtime(root), "desktop-settings.json");
         try
         {
             if (!File.Exists(path) || new FileInfo(path).Length > 16384)
