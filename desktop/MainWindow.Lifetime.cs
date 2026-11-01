@@ -14,6 +14,15 @@ public partial class MainWindow
         if (WindowState == WindowState.Minimized) WindowState = WindowState.Normal;
         Activate();
     }
+    bool CloseWithUnconfirmedService()
+    {
+        // Closing the UI does not prove the service or its tasks have stopped.
+        if (MessageBox.Show(this, Localization.T("无法确认后台服务状态。是否仅关闭界面？后台服务和任务可能仍在运行，尚未确认停止。选择“否”返回界面。"),
+            Localization.T("关闭"), MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) != MessageBoxResult.Yes) return false;
+        _closing = true;
+        Close();
+        return true;
+    }
     async Task HandleWindowCloseAsync()
     {
         if (_closePending || _exitPending || _updateInstalling) return;
@@ -26,7 +35,8 @@ public partial class MainWindow
             bool keepAlive = _commandPending || _launcher is { IsCompleted: false };
             if (!keepAlive)
             {
-                var status = await Client.SendAsync(new() { ["Action"] = "status" });
+                using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(3));
+                var status = await Client.SendAsync(new() { ["Action"] = "status" }, timeout.Token);
                 Check(status);
                 keepAlive = status.B("Online");
             }
@@ -38,7 +48,12 @@ public partial class MainWindow
             }
             else { _closing = true; Close(); }
         }
-        catch (Exception ex) { OpenFromTray(); Notice(Localization.T("当前服务状态未确认。") + SafeText.Clean(ex.Message), true); }
+        catch (Exception ex)
+        {
+            OpenFromTray();
+            Notice(Localization.T("当前服务状态未确认。") + SafeText.Clean(ex.Message), true);
+            CloseWithUnconfirmedService();
+        }
         finally { _closePending = false; }
     }
     internal async Task<bool> ExitFromTrayAsync()
@@ -91,7 +106,7 @@ public partial class MainWindow
         catch (Exception ex)
         {
             Notice(Localization.T("退出未完成，请核对服务状态后重试。") + SafeText.Clean(ex.Message), true);
-            return false;
+            return CloseWithUnconfirmedService();
         }
         finally
         {

@@ -1,5 +1,6 @@
 {
   "zh-CN": {
+    "无法确认后台服务状态。是否仅关闭界面？后台服务和任务可能仍在运行，尚未确认停止。选择“否”返回界面。": "无法确认后台服务状态。是否仅关闭界面？后台服务和任务可能仍在运行，尚未确认停止。选择“否”返回界面。",
     "\n\n现有群与成员名单将保留。是否采用这份设置作为本次保存基准？表单输入不会自动覆盖。": "\n\n现有群与成员名单将保留。是否采用这份设置作为本次保存基准？表单输入不会自动覆盖。",
     " · 已停用": " · 已停用",
     " · 已启用": " · 已启用",
@@ -335,6 +336,7 @@
     "打开更新日志": "打开更新日志"
   },
   "en": {
+    "无法确认后台服务状态。是否仅关闭界面？后台服务和任务可能仍在运行，尚未确认停止。选择“否”返回界面。": "The background service status could not be confirmed. Close only the window? Background services and tasks may still be running; they have not been confirmed stopped. Choose No to return.",
     "\n\n现有群与成员名单将保留。是否采用这份设置作为本次保存基准？表单输入不会自动覆盖。": "\n\nExisting groups and members will remain. Use these settings as the save baseline? Your form input will stay unchanged.",
     " · 已停用": " · Disabled",
     " · 已启用": " · Enabled",
@@ -670,6 +672,7 @@
     "打开更新日志": "Open update logs"
   },
   "ja": {
+    "无法确认后台服务状态。是否仅关闭界面？后台服务和任务可能仍在运行，尚未确认停止。选择“否”返回界面。": "バックグラウンドサービスの状態を確認できません。画面のみを閉じますか？サービスやタスクは実行中の可能性があり、停止は確認されていません。「いいえ」で画面に戻ります。",
     "\n\n现有群与成员名单将保留。是否采用这份设置作为本次保存基准？表单输入不会自动覆盖。": "\n\n既存のグループとメンバーは保持されます。この設定を保存の基準にしますか？入力内容は変更されません。",
     " · 已停用": " · 無効",
     " · 已启用": " · 有効",
@@ -1005,6 +1008,7 @@
     "打开更新日志": "更新ログを開く"
   },
   "ko": {
+    "无法确认后台服务状态。是否仅关闭界面？后台服务和任务可能仍在运行，尚未确认停止。选择“否”返回界面。": "백그라운드 서비스 상태를 확인할 수 없습니다. 창만 닫으시겠습니까? 서비스와 작업이 계속 실행 중일 수 있으며 중지가 확인되지 않았습니다. 아니요를 선택하면 화면으로 돌아갑니다.",
     "\n\n现有群与成员名单将保留。是否采用这份设置作为本次保存基准？表单输入不会自动覆盖。": "\n\n기존 그룹과 구성원은 유지됩니다. 이 설정을 저장 기준으로 사용할까요? 입력 내용은 유지됩니다.",
     " · 已停用": " · 비활성",
     " · 已启用": " · 활성",
@@ -1340,6 +1344,7 @@
     "打开更新日志": "업데이트 로그 열기"
   },
   "es": {
+    "无法确认后台服务状态。是否仅关闭界面？后台服务和任务可能仍在运行，尚未确认停止。选择“否”返回界面。": "No se pudo confirmar el estado del servicio en segundo plano. ¿Cerrar solo la ventana? Los servicios y las tareas podrían seguir ejecutándose; no se ha confirmado su detención. Elija No para volver.",
     "\n\n现有群与成员名单将保留。是否采用这份设置作为本次保存基准？表单输入不会自动覆盖。": "\n\nSe conservan los grupos y miembros existentes. ¿Usar esta configuración como base? Se conservarán los datos del formulario.",
     " · 已停用": " · Desactivado",
     " · 已启用": " · Activado",
@@ -1675,6 +1680,7 @@
     "打开更新日志": "Abrir registros"
   },
   "fr": {
+    "无法确认后台服务状态。是否仅关闭界面？后台服务和任务可能仍在运行，尚未确认停止。选择“否”返回界面。": "Impossible de confirmer l’état du service en arrière-plan. Fermer uniquement la fenêtre ? Les services et les tâches peuvent encore être en cours ; leur arrêt n’a pas été confirmé. Choisissez Non pour revenir.",
     "\n\n现有群与成员名单将保留。是否采用这份设置作为本次保存基准？表单输入不会自动覆盖。": "\n\nLes groupes et membres existants sont conservés. Utiliser ces paramètres comme référence ? Vos saisies resteront inchangées.",
     " · 已停用": " · Désactivé",
     " · 已启用": " · Activé",
@@ -2010,6 +2016,7 @@
     "打开更新日志": "Ouvrir les journaux"
   },
   "de": {
+    "无法确认后台服务状态。是否仅关闭界面？后台服务和任务可能仍在运行，尚未确认停止。选择“否”返回界面。": "Der Status des Hintergrunddienstes konnte nicht bestätigt werden. Nur das Fenster schließen? Dienste und Aufgaben laufen möglicherweise weiter; ihr Ende wurde nicht bestätigt. Wählen Sie Nein, um zurückzukehren.",
     "\n\n现有群与成员名单将保留。是否采用这份设置作为本次保存基准？表单输入不会自动覆盖。": "\n\nBestehende Gruppen und Mitglieder bleiben erhalten. Diese Einstellungen als Speichergrundlage verwenden? Ihre Eingaben bleiben unverändert.",
     " · 已停用": " · Deaktiviert",
     " · 已启用": " · Aktiviert",
@@ -2345,6 +2352,7 @@
     "打开更新日志": "Updateprotokolle öffnen"
   },
   "pt-BR": {
+    "无法确认后台服务状态。是否仅关闭界面？后台服务和任务可能仍在运行，尚未确认停止。选择“否”返回界面。": "Não foi possível confirmar o estado do serviço em segundo plano. Fechar apenas a janela? Os serviços e as tarefas podem continuar em execução; a parada não foi confirmada. Escolha Não para voltar.",
     "\n\n现有群与成员名单将保留。是否采用这份设置作为本次保存基准？表单输入不会自动覆盖。": "\n\nOs grupos e membros existentes serão mantidos. Usar estas configurações como base? Os dados do formulário serão preservados.",
     " · 已停用": " · Desativado",
     " · 已启用": " · Ativado",
@@ -2680,6 +2688,7 @@
     "打开更新日志": "Abrir logs"
   },
   "ru": {
+    "无法确认后台服务状态。是否仅关闭界面？后台服务和任务可能仍在运行，尚未确认停止。选择“否”返回界面。": "Не удалось подтвердить состояние фоновой службы. Закрыть только окно? Службы и задачи могут продолжать работу; их остановка не подтверждена. Выберите «Нет», чтобы вернуться.",
     "\n\n现有群与成员名单将保留。是否采用这份设置作为本次保存基准？表单输入不会自动覆盖。": "\n\nСуществующие группы и участники сохранятся. Использовать эти настройки как основу? Введённые данные останутся без изменений.",
     " · 已停用": " · Отключено",
     " · 已启用": " · Включено",
@@ -3015,6 +3024,7 @@
     "打开更新日志": "Открыть журнал"
   },
   "zh-TW": {
+    "无法确认后台服务状态。是否仅关闭界面？后台服务和任务可能仍在运行，尚未确认停止。选择“否”返回界面。": "無法確認背景服務狀態。是否僅關閉介面？背景服務和工作可能仍在執行，尚未確認停止。選擇「否」返回介面。",
     "\n\n现有群与成员名单将保留。是否采用这份设置作为本次保存基准？表单输入不会自动覆盖。": "\n\n現有群與成員名單將保留。是否采用這份設置作為本次保存基準？表單輸入不會自動覆蓋。",
     " · 已停用": " · 已停用",
     " · 已启用": " · 已啟用",

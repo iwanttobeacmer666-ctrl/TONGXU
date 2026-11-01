@@ -150,6 +150,16 @@ func readOperator(path string) (map[string]json.RawMessage, string, string, []gr
 func (m *operatorManager) handle(ctx context.Context, req manageRequest) manageReply {
 	m.mu.Lock()
 	defer m.mu.Unlock()
+	if req.Action == "status" {
+		// Process state is independent of enrollment/configuration readiness.
+		// Preserve optional metadata for existing callers, but never gate the
+		// status response on a missing, damaged or externally changed config.
+		out := manageReply{Success: true, Online: m.service != nil, Owner: m.owner, Status: m.serviceStatus()}
+		if _, version, owner, _, err := readOperator(m.path); err == nil && (m.owner == "" || owner == m.owner) {
+			out.Version, out.Owner = version, owner
+		}
+		return out
+	}
 	out := manageReply{Online: m.service != nil, CleanupReady: true}
 	raw, version, owner, groups, err := readOperator(m.path)
 	if err != nil {
@@ -186,38 +196,21 @@ func (m *operatorManager) handle(ctx context.Context, req manageRequest) manageR
 		out.Success = true
 		return out
 	}
-	if req.Action == "status" || req.Action == "service-stop" {
+	if req.Action == "service-stop" {
 		out.Groups = nil
 		out.CleanupReady = false
-		if req.Action == "service-stop" {
-			if m.service == nil || m.shutdown == nil {
-				out.Message = "服务未运行或不支持停止。"
-				return out
-			}
-			if req.Version == "" || req.Version != version {
-				out.Code = "version_conflict"
-				out.Message = "配置版本已变化，请刷新后重试。"
-				return out
-			}
-			m.stopping = true
-			out.Message = "停止请求已接受；请等待服务退出，尚未确认临时清理完成。"
+		if m.service == nil || m.shutdown == nil {
+			out.Message = "服务未运行或不支持停止。"
+			return out
 		}
-		out.Status = &localServiceStatus{Service: "offline", Platform: "stopped", Agent: "unchecked", Started: m.started}
-		if m.service != nil {
-			out.Status.UpdatePaused = m.service.UpdatePaused()
-			out.Status.Service = "running"
-			if m.stopping {
-				out.Status.Service = "stopping"
-			}
-			out.Status.Agent = "unavailable"
-			if m.service.AgentReady() {
-				out.Status.Agent = "ready"
-			}
-			out.Status.Platform = "unknown"
-			if m.platform != nil {
-				out.Status.Platform, out.Status.ConnectedAt = m.platform.ConnectionStatus()
-			}
+		if req.Version == "" || req.Version != version {
+			out.Code = "version_conflict"
+			out.Message = "配置版本已变化，请刷新后重试。"
+			return out
 		}
+		m.stopping = true
+		out.Message = "停止请求已接受；请等待服务退出，尚未确认临时清理完成。"
+		out.Status = m.serviceStatus()
 		out.Success = true
 		return out
 	}

@@ -1,4 +1,4 @@
-param([string]$OutputDirectory = (Join-Path $PSScriptRoot 'dist'), [string]$DesktopDirectory = '')
+param([string]$OutputDirectory = (Join-Path $PSScriptRoot 'dist'), [string]$DesktopDirectory = '', [string]$BackendFile = '')
 $ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path $PSScriptRoot -Parent
 $taskCompiler = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
@@ -17,6 +17,7 @@ $taskFiles = @(
 foreach ($taskRelative in $taskFiles) {
  $taskSource = Join-Path $taskRoot $taskRelative
  if ($DesktopDirectory -and $taskRelative.StartsWith('bin\desktop\')) { $taskSource = Join-Path $DesktopDirectory ([IO.Path]::GetFileName($taskRelative)) }
+ if ($BackendFile -and $taskRelative -eq 'bin\group-assistant.exe') { $taskSource = [IO.Path]::GetFullPath($BackendFile) }
  if (-not (Test-Path -LiteralPath $taskSource -PathType Leaf)) { throw "Missing release file: $taskRelative" }
  $taskDestination = Join-Path $taskPayload $taskRelative
  New-Item -ItemType Directory -Path (Split-Path $taskDestination -Parent) -Force | Out-Null
