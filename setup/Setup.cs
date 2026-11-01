@@ -255,6 +255,20 @@ internal static class Signature
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)] struct FileInfo { public uint Size; [MarshalAs(UnmanagedType.LPWStr)] public string Path; public IntPtr File, Subject; }
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)] struct TrustData { public uint Size; public IntPtr Policy, Sip; public uint UI, Revocation, Choice; public IntPtr File; public uint State; public IntPtr StateData, Url; public uint Flags, Context; }
     [DllImport("wintrust.dll", ExactSpelling = true)] static extern int WinVerifyTrust(IntPtr hwnd, ref Guid action, ref TrustData data);
+    [DllImport("crypt32.dll", EntryPoint = "CertGetNameStringW", CharSet = CharSet.Unicode, ExactSpelling = true)]
+    static extern uint CertGetNameString(IntPtr cert, uint type, uint flags, [MarshalAs(UnmanagedType.LPStr)] string oid, StringBuilder name, uint length);
+    internal static bool IsMicrosoftPublisher(X509Certificate2 cert)
+    {
+        // .NET uses CN=.NET as well as the general Microsoft product certificate.
+        // Read the organization by OID, never by searching the formatted subject text.
+        var name = cert.GetNameInfo(X509NameType.SimpleName, false);
+        if (name != "Microsoft Corporation" && name != ".NET") return false;
+        var length = CertGetNameString(cert.Handle, 3, 0, "2.5.4.10", null, 0);
+        if (length <= 1 || length > 1024) return false;
+        var organization = new StringBuilder((int)length);
+        if (CertGetNameString(cert.Handle, 3, 0, "2.5.4.10", organization, length) != length) return false;
+        return organization.ToString() == "Microsoft Corporation";
+    }
     internal static void VerifyMicrosoft(string path)
     {
         var file = new FileInfo { Size = (uint)Marshal.SizeOf(typeof(FileInfo)), Path = path };
@@ -264,7 +278,7 @@ internal static class Signature
             var action = new Guid("00AAC56B-CD44-11d0-8CC2-00C04FC295EE");
             if (WinVerifyTrust(IntPtr.Zero, ref action, ref data) != 0) throw new IOException("Microsoft 安装程序签名或证书校验失败。");
             using (var cert = new X509Certificate2(X509Certificate.CreateFromSignedFile(path)))
-                if (cert.GetNameInfo(X509NameType.SimpleName, false) != "Microsoft Corporation") throw new IOException("运行环境发布者不是 Microsoft Corporation。");
+                if (!IsMicrosoftPublisher(cert)) throw new IOException("运行环境发布者校验失败。证书主体：" + cert.Subject);
         } finally { Marshal.DestroyStructure(ptr, typeof(FileInfo)); Marshal.FreeHGlobal(ptr); }
     }
 }
